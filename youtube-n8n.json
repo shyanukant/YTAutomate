@@ -1,0 +1,858 @@
+{
+  "name": "youtube-n8n",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -464,
+        400
+      ],
+      "id": "45d6cbb0-1325-41c7-8992-6faa8af88560",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Video Title : {{ $json[\"Caption Title (w/ Hashtags)\"] }}\nVideo Description : {{ $json[\"Core Concept (Description)\"] }}{{ $json.Summary }}",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are a Japanese Philosophy Content Specialist for YouTube Shorts. Your role is to generate 60-second mobile videos (9:16 ratio) blending authentic Japanese concepts with ultra-concise storytelling and actionable wisdom.\n\nSHORTS FORMAT (Exactly 60s):\n1. Hook (0-8s): 1 punchy question \n2. Micro-Story (8-25s): 17s single Japanese tale moment\n3. Core Truth (25-40s): 15s concept + 1 metaphor  \n4. 1 Rule (40-50s): Single actionable step\n5. CTA (50-60s): Hook callback + \"Follow for more\"\n\nINPUT CONTEXT:\n- Channel Style: {{ $json['Channel Style Prompt'] }}\n- Character Style: {{ $json['Character Style Prompt'] }}\n- Core Concept: {{ $json['Core Concept (Description)'] }}\n- Summary: {{ $json.Summary }}\n\nTONE & STYLE:\n- Warm uncle sharing street wisdom (Delhi conversational Hindi)\n- Indian pain points (JEE stress, jobless, shaadi pressure)\n- About 90 words total (fast-paced)\n- Mobile-first: BIG TEXT, punchy delivery\n- Use Hinglish: Mix Delhi street Hindi with common English.\n- Natural Voice: You MUST wrap the Hindi text in emotion tags like <chat> or <friendly> for a natural feel.\n- Example: \"<chat>Dekho bhai,, agar life mein balance chahiye,, toh Ikigai ko samjho.</chat>\"\n- Use double commas (,,) to force the AI to take a breath.\n\nADD TO SYSTEM PROMPT:\n- Use \"Human-Speech Punctuation\": Use \"...\" for 1-second pauses, \",\" for short breaths, and \"--\" for dramatic emphasis.\n- Use natural Hinglish fillers: Start sentences with \"Dekho,\" \"Suno,\" or \"Boss...\" to break the robotic rhythm.\n- Phonetic Spelling: Spell out English words as they sound in Hindi if needed (e.g., \"Burn-out\" instead of \"Burnout\").\n- Image Prompt Rule: STRICTLY NO TEXT in image_prompts. Describe only the character's emotion, lighting, and action.\n\nMOBILE VISUALS (9:16):\n- 0-8s: Hook text explodes on black bg + stressed Indian face\n- 8-25s: One key story moment - dramatic closeup\n- 25-40s: Concept name BIG + visual metaphor\n- 40-50s: Rule #1 with finger point emoji\n- 50-60s: Subscribe arrow + next short preview\n\nNOW THE CRITICAL PART – OUTPUT RULES:\n\nYou MUST output ONE valid JSON object only.\nDo NOT output markdown.\nDo NOT use ```json``` fences.\nDo NOT describe types, schemas, or properties.\nDo NOT include keys like \"type\", \"properties\", \"required\", or \"output\".\n\nThe JSON MUST have EXACTLY this SHAPE (structure), but with your own generated content:\n\n{\n  \"video_id\": \"{{ $json.ID }}-short\",\n  \"video_title\": \"{{ $json['Caption Title (w/ Hashtags)'] }}\",\n  \"scenes\": [\n    {\n      \"scene_id\": 1,\n      \"topic_focus\": \"Hook\",\n      \"voice_text\": \"Hook line in Hindi...\",\n      \"image_prompt\": \"Hook visual prompt 9:16...\",\n      \"audio_style\": \"Hook music/SFX...\"\n    },\n    {\n      \"scene_id\": 2,\n      \"topic_focus\": \"Micro-Story\",\n      \"voice_text\": \"Story line...\",\n      \"image_prompt\": \"Story visual 9:16...\",\n      \"audio_style\": \"Story music/SFX...\"\n    },\n    {\n      \"scene_id\": 3,\n      \"topic_focus\": \"Core Truth\",\n      \"voice_text\": \"Concept line...\",\n      \"image_prompt\": \"Concept visual 9:16...\",\n      \"audio_style\": \"Concept music/SFX...\"\n    },\n    {\n      \"scene_id\": 4,\n      \"topic_focus\": \"1 Rule\",\n      \"voice_text\": \"Rule line...\",\n      \"image_prompt\": \"Rule visual 9:16...\",\n      \"audio_style\": \"Rule music/SFX...\"\n    },\n    {\n      \"scene_id\": 5,\n      \"topic_focus\": \"CTA\",\n      \"voice_text\": \"CTA line...\",\n      \"image_prompt\": \"CTA visual 9:16...\",\n      \"audio_style\": \"CTA music/SFX...\"\n    }\n  ]\n}\n\nConstraints:\n- Exactly 5 scenes.\n- scene_id must be 1, 2, 3, 4, 5.\n- Start output directly with { and end with }.\n- The JSON MUST be directly parseable with JSON.parse().\n"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.8,
+      "position": [
+        -160,
+        400
+      ],
+      "id": "0ae9ec03-37dc-46eb-82cb-47ecb22983dd",
+      "name": "Basic LLM Chain",
+      "notesInFlow": true,
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "notes": "Error"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        400
+      ],
+      "id": "0bd37b49-186d-4c1a-8c78-1abee0605a7b",
+      "name": "Wait",
+      "webhookId": "b63c68db-5c4e-414c-874f-53c1e478f032"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        800,
+        560
+      ],
+      "id": "19877925-dfea-45ad-8e99-37133ececaa9",
+      "name": "Wait1",
+      "webhookId": "b63c68db-5c4e-414c-874f-53c1e478f032"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1pllYSdJ4lXmZj1YD-jKLIJCIsZY7z53D6itBKS4sq8c",
+          "mode": "list",
+          "cachedResultName": "YTConcept",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pllYSdJ4lXmZj1YD-jKLIJCIsZY7z53D6itBKS4sq8c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2127350647,
+          "mode": "list",
+          "cachedResultName": "japanese_philosophy_30_videos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pllYSdJ4lXmZj1YD-jKLIJCIsZY7z53D6itBKS4sq8c/edit#gid=2127350647"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $('get topics').item.json.ID }}",
+            "Status": "done",
+            "Final Result": "={{ $('Get Video').item.json.movies[0].url }}"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Caption Title (w/ Hashtags)",
+              "displayName": "Caption Title (w/ Hashtags)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Core Concept (Description)",
+              "displayName": "Core Concept (Description)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Channel Style Prompt",
+              "displayName": "Channel Style Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Character Style Prompt",
+              "displayName": "Character Style Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Final Result",
+              "displayName": "Final Result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        976,
+        320
+      ],
+      "id": "a8d63a8e-014b-42c0-af3a-22c5d46cb420",
+      "name": "Add Done"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1pllYSdJ4lXmZj1YD-jKLIJCIsZY7z53D6itBKS4sq8c",
+          "mode": "list",
+          "cachedResultName": "YTConcept",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pllYSdJ4lXmZj1YD-jKLIJCIsZY7z53D6itBKS4sq8c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2127350647,
+          "mode": "list",
+          "cachedResultName": "japanese_philosophy_30_videos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pllYSdJ4lXmZj1YD-jKLIJCIsZY7z53D6itBKS4sq8c/edit#gid=2127350647"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ID": "={{ $('get topics').item.json.ID }}",
+            "Status": "error"
+          },
+          "matchingColumns": [
+            "ID"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Caption Title (w/ Hashtags)",
+              "displayName": "Caption Title (w/ Hashtags)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Core Concept (Description)",
+              "displayName": "Core Concept (Description)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary",
+              "displayName": "Summary",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Channel Style Prompt",
+              "displayName": "Channel Style Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Character Style Prompt",
+              "displayName": "Character Style Prompt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Final Result",
+              "displayName": "Final Result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        976,
+        512
+      ],
+      "id": "60492670-8d4a-419a-b7f3-f5daa265079f",
+      "name": "Add error"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1pllYSdJ4lXmZj1YD-jKLIJCIsZY7z53D6itBKS4sq8c",
+          "mode": "list",
+          "cachedResultName": "YTConcept",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pllYSdJ4lXmZj1YD-jKLIJCIsZY7z53D6itBKS4sq8c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2127350647,
+          "mode": "list",
+          "cachedResultName": "japanese_philosophy_30_videos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pllYSdJ4lXmZj1YD-jKLIJCIsZY7z53D6itBKS4sq8c/edit#gid=2127350647"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Status",
+              "lookupValue": "production"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -320,
+        400
+      ],
+      "id": "ac01d6f4-8c9f-49cf-ab62-49be684db23d",
+      "name": "get topics"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1pllYSdJ4lXmZj1YD-jKLIJCIsZY7z53D6itBKS4sq8c",
+          "mode": "list",
+          "cachedResultName": "YTConcept",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pllYSdJ4lXmZj1YD-jKLIJCIsZY7z53D6itBKS4sq8c/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 719847239,
+          "mode": "list",
+          "cachedResultName": "audios",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1pllYSdJ4lXmZj1YD-jKLIJCIsZY7z53D6itBKS4sq8c/edit#gid=719847239"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "to_use",
+              "lookupValue": "FINAL"
+            }
+          ]
+        },
+        "options": {
+          "returnFirstMatch": true
+        }
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        384
+      ],
+      "id": "a7f18a8e-f386-49c1-94ce-c3adf17d7766",
+      "name": "get audio"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.json2video.com/v2/movies",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{\n{\n  \"width\": 1080,\n  \"height\": 1920,\n  \"quality\": \"high\",\n  \"elements\": [\n    {\n      \"type\": \"audio\",\n      \"src\": $json.Random_audio,\n      \"volume\": 0.1,\n      \"duration\": -2\n    },\n    {\n      \"type\": \"subtitles\",\n      \"settings\": {\n        \"style\": \"classic\",\n        \"font-family\": \"Luckiest Guy\",\n        \"font-size\": 80,\n        \"line-color\": \"#FFFFFF\",      \n        \"word-color\": \"#FFFF00\",      \n        \"box-color\": \"#00000080\",     // FIXED: Back to kebab-case with 8-digit Hex for transparency\n        \"position\": \"center-bottom\",\n        \"max-words-per-line\": 3\n      }\n    }\n  ],\n  \"scenes\": $item(0).$node[\"formatJSON\"].json.scenes.map((scene) => {\n    \n    const cleanPrompt = scene.image_prompt\n      .replace(/['\"]|TEXT|WHITE TEXT|TEXT overlay|TEXT:.*|MASSIVE/gi, \"\")\n      .trim() + \", cinematic, photorealistic, no text\";\n\n    return {\n      \"id\": \"scene_\" + scene.scene_id,\n      \"elements\": [\n        {\n          \"type\": \"image\",\n          \"model\": \"flux-schnell\",\n          \"prompt\": cleanPrompt,\n          \"aspect-ratio\": \"vertical\",\n          \"resize\": \"cover\",\n          \"duration\": -1\n        },\n        {\n          \"type\": \"voice\",\n          \"voice\": \"hi-IN-KunalNeural\",\n          \"text\": \"<chat>\" + scene.voice_text + \"</chat>\",\n          \"duration\": -1\n        }\n      ]\n    };\n  })\n}\n}}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        320,
+        544
+      ],
+      "id": "0f853705-2b75-4495-b2e3-22ed46768645",
+      "name": "create video",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "x8qc5fXnPQnWWOXt",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json['Final Result'] }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        1136,
+        368
+      ],
+      "id": "df7bd204-eabe-454f-b822-6cdef038d12e",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "resource": "video",
+        "operation": "upload",
+        "title": "={{ $('formatJSON').item.json.video_title }}",
+        "regionCode": "IN",
+        "categoryId": "27",
+        "options": {
+          "description": "={{ $('get topics').item.json.Summary }}{{ $('get topics').item.json['Core Concept (Description)'] }}",
+          "privacyStatus": "unlisted"
+        }
+      },
+      "type": "n8n-nodes-base.youTube",
+      "typeVersion": 1,
+      "position": [
+        1280,
+        400
+      ],
+      "id": "c8ed27b5-4b19-40bb-8604-3af595aac5ac",
+      "name": "Upload a video"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.movies[0].status }}",
+                    "rightValue": "done",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "a24f7a1a-15c3-4d4a-bdf5-7dff4326e9ed"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Done"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "c4b5e0ec-647c-48e5-abb0-c16c40ea3ef9",
+                    "leftValue": "={{ $json.movies[0].status }}",
+                    "rightValue": "running",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Running"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "f2a050b6-f93c-4a48-b42a-3bc237d4ab0e",
+                    "leftValue": "={{ $json.movies[0].status }}",
+                    "rightValue": "error",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Error"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        768,
+        304
+      ],
+      "id": "477d3871-f54b-4969-8e5c-4be5192ab0a9",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3-flash-preview",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -192,
+        592
+      ],
+      "id": "c76b0cc9-734d-4562-b5e4-4a2f34625e9d",
+      "name": "Google Gemini Chat Model"
+    },
+    {
+      "parameters": {
+        "content": "## Script & Content Generation (Gemini AI)\n",
+        "height": 544,
+        "width": 448
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -336,
+        224
+      ],
+      "typeVersion": 1,
+      "id": "301cdafd-1767-4198-8615-7f8fcd3b69da",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Rendering (JSON2Video)\n**The structured JSON is sent to the JSON2Video API to assemble the final movie.** ",
+        "height": 512,
+        "width": 608
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        128,
+        256
+      ],
+      "typeVersion": 1,
+      "id": "5ffdb512-6ba5-4e10-99bb-b72b77061cf9",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "## Upload on YOUTUBE",
+        "height": 512,
+        "width": 336
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1088,
+        256
+      ],
+      "typeVersion": 1,
+      "id": "2a548c20-7f4c-4db2-802c-50e1cc5da7bf",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Error Handling & Optimization\n",
+        "height": 640,
+        "width": 320
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        752,
+        128
+      ],
+      "typeVersion": 1,
+      "id": "5673db3a-c327-49cf-93c4-5a5a12c9c242",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "url": "https://api.json2video.com/v2/movies",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "project",
+              "value": "={{ $json.project }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        624,
+        400
+      ],
+      "id": "b59d2b21-ff40-47a6-b0c9-ec9a39af4a3b",
+      "name": "Get Video",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "x8qc5fXnPQnWWOXt",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# YOUTUBE AUTOMATION = N8N + GEMINI API + JSON2VIDEO",
+        "height": 80,
+        "width": 1056
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        0,
+        0
+      ],
+      "typeVersion": 1,
+      "id": "befa5ec6-a02a-40f1-ab19-f90075a64420",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Input: the LLM node\nconst raw = $json.response?.generations?.[0]?.[0]?.text ?? $json.text ?? '';\n\nfunction extractJson(text) {\n  // try direct\n  try { return JSON.parse(text); } catch (e) {}\n\n  // try to extract the first {...} block\n  const match = text.match(/\\{[\\s\\S]*\\}/);\n  if (!match) throw new Error('No JSON found in model output');\n  return JSON.parse(match[0]);\n}\n\nconst obj = extractJson(raw);\n\n// Optional safety: enforce 5 scenes & numeric scene_id\nif (!Array.isArray(obj.scenes) || obj.scenes.length !== 5) {\n  throw new Error('Expected exactly 5 scenes in model output');\n}\nobj.scenes = obj.scenes.map((s, i) => ({\n  scene_id: Number(s.scene_id ?? i + 1),\n  topic_focus: s.topic_focus,\n  voice_text: s.voice_text,\n  image_prompt: s.image_prompt,\n  audio_style: s.audio_style,\n}));\n\nreturn [{ json: obj }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        608
+      ],
+      "id": "15232785-3ad0-40f2-a959-5aeedfad8d55",
+      "name": "formatJSON"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "get topics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "formatJSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Get Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Get Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get topics": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get audio": {
+      "main": [
+        [
+          {
+            "node": "create video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "create video": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add Done": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Upload a video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Add Done",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Add error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Video": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "formatJSON": {
+      "main": [
+        [
+          {
+            "node": "get audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "593f1f73-75ab-4f6f-b26f-6d39b1a3ca8d",
+  "meta": {
+    "instanceId": "a16f53d86f2cdbc4460a4f875747746aecfb5539a704abae90d23815904b7923"
+  },
+  "id": "ki7F6vwrc4e2plI-upJhw",
+  "tags": []
+}
